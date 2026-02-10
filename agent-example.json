@@ -1,0 +1,34 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "vpn.tempo",
+  "description": "Premium High-Speed VPN Agent. Zero logs, instant access.",
+  "image": "ipfs://QmYourImageHash",
+  "services": [
+    {
+      "name": "MCP",
+      "endpoint": "https://vpn-node-01.tempo.net/mcp",
+      "version": "2025-06-18"
+    },
+    {
+      "name": "Payment",
+      "endpoint": "https://pay.tempo.net/invoice",
+      "version": "x402"
+    },
+    {
+      "name": "GitHub",
+      "endpoint": "https://github.com/tempo-labs/vpn-agent"
+    }
+  ],
+  "registrations": [
+    {
+      "agentId": 1,
+      "agentRegistry": "eip155:5042002:0xRegistryAddress"
+    }
+  ],
+  "attributes": {
+    "Agent Type": "ORGANIZATION",
+    "Legal": "US-DE-987654321",
+    "Trust Score": 98,
+    "Category": "Network Utility"
+  }
+}
