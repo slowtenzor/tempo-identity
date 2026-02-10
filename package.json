@@ -1,0 +1,19 @@
+{
+    "name": "tempo-identity",
+    "version": "0.1.0",
+    "description": "Tempo Identity Registry — ERC-8004 Trustless Agents implementation for Tempo Network",
+    "scripts": {
+        "compile": "hardhat compile",
+        "test": "hardhat test",
+        "deploy:moderato": "hardhat run scripts/deploy.ts --network tempoModerato",
+        "clean": "hardhat clean"
+    },
+    "devDependencies": {
+        "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+        "hardhat": "^2.22.0",
+        "dotenv": "^16.4.0"
+    },
+    "dependencies": {
+        "@openzeppelin/contracts": "^5.1.0"
+    }
+}
