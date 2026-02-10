@@ -1,0 +1,11 @@
+{
+  "network": "tempoModerato",
+  "chainId": 42431,
+  "deployer": "0x4c155324A7Fc115640F0087a91CeF69C5e8A1C39",
+  "deployedAt": "2026-02-10T20:49:58.710Z",
+  "contracts": {
+    "TempoIdentityRegistry": "0xF4942bdF12767617c0ecf66613d93b6B9C8E4FCE",
+    "TempoReputationRegistry": "0x61eC6177C7F7efd732A9De59f75C35466659e0f3",
+    "TempoNameService": "0xb3e2B82836175659977676B7Fd3f246678c33Ef1"
+  }
+}
