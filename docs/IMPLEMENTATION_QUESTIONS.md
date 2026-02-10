@@ -20,6 +20,16 @@
 
 **→ Question: Which network should we deploy to? Tempo Andantino (42429) or ARC Testnet (5042002)?**
 
+RESOLVED: Deploy on Tempo:
+
+Network Name	Tempo Testnet (Moderato)
+Currency	USD
+Chain ID	42431
+HTTP URL	https://rpc.moderato.tempo.xyz
+WebSocket URL	wss://rpc.moderato.tempo.xyz
+Block Explorer	https://explore.tempo.xyz
+
+
 ---
 
 ### 2. ERC-8004 Compliance Level
