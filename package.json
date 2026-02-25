@@ -6,7 +6,9 @@
         "compile": "hardhat compile",
         "test": "hardhat test",
         "deploy:moderato": "hardhat run scripts/deploy.ts --network tempoModerato",
-        "clean": "hardhat clean"
+        "clean": "hardhat clean",
+        "check:requirements": "hardhat run scripts/check-requirements.ts",
+        "check:requirements:strict": "hardhat run scripts/check-requirements.ts -- --strict-all"
     },
     "devDependencies": {
         "@nomicfoundation/hardhat-toolbox": "^5.0.0",

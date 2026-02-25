@@ -1,11 +1,25 @@
 {
+  "version": "draft_v2",
   "network": "tempoModerato",
   "chainId": 42431,
   "deployer": "0x4c155324A7Fc115640F0087a91CeF69C5e8A1C39",
-  "deployedAt": "2026-02-10T20:49:58.710Z",
+  "deployedAt": "2026-02-11T20:17:56.365Z",
   "contracts": {
-    "TempoIdentityRegistry": "0xF4942bdF12767617c0ecf66613d93b6B9C8E4FCE",
-    "TempoReputationRegistry": "0x61eC6177C7F7efd732A9De59f75C35466659e0f3",
-    "TempoNameService": "0xb3e2B82836175659977676B7Fd3f246678c33Ef1"
-  }
+    "TempoIdentityRegistry": "0x563D7b2FACd1cB19Fc7e4Fd6C26e0Bf69360BE4A",
+    "TempoReputationRegistry": "0x21473cd6d832a3d6BC933a2f59DAE7311276132C",
+    "TempoNameService": "0x87020198e7595C60b200EA80be41548F44573365"
+  },
+  "history": [
+    {
+      "network": "tempoModerato",
+      "chainId": 42431,
+      "deployer": "0x4c155324A7Fc115640F0087a91CeF69C5e8A1C39",
+      "deployedAt": "2026-02-10T20:49:58.710Z",
+      "contracts": {
+        "TempoIdentityRegistry": "0xF4942bdF12767617c0ecf66613d93b6B9C8E4FCE",
+        "TempoReputationRegistry": "0x61eC6177C7F7efd732A9De59f75C35466659e0f3",
+        "TempoNameService": "0xb3e2B82836175659977676B7Fd3f246678c33Ef1"
+      }
+    }
+  ]
 }

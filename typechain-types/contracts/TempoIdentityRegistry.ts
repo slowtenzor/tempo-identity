@@ -40,8 +40,11 @@ export interface TempoIdentityRegistryInterface extends Interface {
     nameOrSignature:
       | "approve"
       | "balanceOf"
+      | "burn"
       | "eip712Domain"
+      | "getAgentAddress"
       | "getAgentWallet"
+      | "getAgentsByOwner"
       | "getApproved"
       | "getMetadata"
       | "isApprovedForAll"
@@ -50,6 +53,7 @@ export interface TempoIdentityRegistryInterface extends Interface {
       | "register()"
       | "register(string,(string,bytes)[])"
       | "register(string)"
+      | "registerWithAgent"
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setAgentURI"
@@ -65,6 +69,8 @@ export interface TempoIdentityRegistryInterface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
+      | "AgentAddressSet"
+      | "AgentBurned"
       | "AgentWalletSet"
       | "AgentWalletUnset"
       | "Approval"
@@ -86,13 +92,22 @@ export interface TempoIdentityRegistryInterface extends Interface {
     functionFragment: "balanceOf",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "burn", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "eip712Domain",
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getAgentAddress",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getAgentWallet",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAgentsByOwner",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
@@ -122,6 +137,10 @@ export interface TempoIdentityRegistryInterface extends Interface {
   encodeFunctionData(
     functionFragment: "register(string)",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "registerWithAgent",
+    values: [string, AddressLike, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom(address,address,uint256)",
@@ -167,12 +186,21 @@ export interface TempoIdentityRegistryInterface extends Interface {
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eip712Domain",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getAgentAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getAgentWallet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAgentsByOwner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -196,6 +224,10 @@ export interface TempoIdentityRegistryInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "register(string)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "registerWithAgent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -238,12 +270,47 @@ export interface TempoIdentityRegistryInterface extends Interface {
   ): Result;
 }
 
-export namespace AgentWalletSetEvent {
-  export type InputTuple = [agentId: BigNumberish, wallet: AddressLike];
-  export type OutputTuple = [agentId: bigint, wallet: string];
+export namespace AgentAddressSetEvent {
+  export type InputTuple = [agentId: BigNumberish, agentAddress: AddressLike];
+  export type OutputTuple = [agentId: bigint, agentAddress: string];
   export interface OutputObject {
     agentId: bigint;
-    wallet: string;
+    agentAddress: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace AgentBurnedEvent {
+  export type InputTuple = [agentId: BigNumberish, owner: AddressLike];
+  export type OutputTuple = [agentId: bigint, owner: string];
+  export interface OutputObject {
+    agentId: bigint;
+    owner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace AgentWalletSetEvent {
+  export type InputTuple = [
+    agentId: BigNumberish,
+    oldWallet: AddressLike,
+    newWallet: AddressLike
+  ];
+  export type OutputTuple = [
+    agentId: bigint,
+    oldWallet: string,
+    newWallet: string
+  ];
+  export interface OutputObject {
+    agentId: bigint;
+    oldWallet: string;
+    newWallet: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -370,13 +437,20 @@ export namespace RegisteredEvent {
   export type InputTuple = [
     agentId: BigNumberish,
     agentURI: string,
-    owner: AddressLike
+    owner: AddressLike,
+    agentAddress: AddressLike
   ];
-  export type OutputTuple = [agentId: bigint, agentURI: string, owner: string];
+  export type OutputTuple = [
+    agentId: bigint,
+    agentURI: string,
+    owner: string,
+    agentAddress: string
+  ];
   export interface OutputObject {
     agentId: bigint;
     agentURI: string;
     owner: string;
+    agentAddress: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -405,16 +479,19 @@ export namespace TransferEvent {
 export namespace URIUpdatedEvent {
   export type InputTuple = [
     agentId: BigNumberish,
+    oldURI: string,
     newURI: string,
     updatedBy: AddressLike
   ];
   export type OutputTuple = [
     agentId: bigint,
+    oldURI: string,
     newURI: string,
     updatedBy: string
   ];
   export interface OutputObject {
     agentId: bigint;
+    oldURI: string;
     newURI: string;
     updatedBy: string;
   }
@@ -475,6 +552,8 @@ export interface TempoIdentityRegistry extends BaseContract {
 
   balanceOf: TypedContractMethod<[owner: AddressLike], [bigint], "view">;
 
+  burn: TypedContractMethod<[agentId: BigNumberish], [void], "nonpayable">;
+
   eip712Domain: TypedContractMethod<
     [],
     [
@@ -491,9 +570,21 @@ export interface TempoIdentityRegistry extends BaseContract {
     "view"
   >;
 
+  getAgentAddress: TypedContractMethod<
+    [agentId: BigNumberish],
+    [string],
+    "view"
+  >;
+
   getAgentWallet: TypedContractMethod<
     [agentId: BigNumberish],
     [string],
+    "view"
+  >;
+
+  getAgentsByOwner: TypedContractMethod<
+    [owner: AddressLike],
+    [bigint[]],
     "view"
   >;
 
@@ -525,6 +616,17 @@ export interface TempoIdentityRegistry extends BaseContract {
 
   "register(string)": TypedContractMethod<
     [agentURI: string],
+    [bigint],
+    "nonpayable"
+  >;
+
+  registerWithAgent: TypedContractMethod<
+    [
+      agentURI: string,
+      ownerAddress: AddressLike,
+      deadline: BigNumberish,
+      ownerSignature: BytesLike
+    ],
     [bigint],
     "nonpayable"
   >;
@@ -612,6 +714,9 @@ export interface TempoIdentityRegistry extends BaseContract {
     nameOrSignature: "balanceOf"
   ): TypedContractMethod<[owner: AddressLike], [bigint], "view">;
   getFunction(
+    nameOrSignature: "burn"
+  ): TypedContractMethod<[agentId: BigNumberish], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "eip712Domain"
   ): TypedContractMethod<
     [],
@@ -629,8 +734,14 @@ export interface TempoIdentityRegistry extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "getAgentAddress"
+  ): TypedContractMethod<[agentId: BigNumberish], [string], "view">;
+  getFunction(
     nameOrSignature: "getAgentWallet"
   ): TypedContractMethod<[agentId: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "getAgentsByOwner"
+  ): TypedContractMethod<[owner: AddressLike], [bigint[]], "view">;
   getFunction(
     nameOrSignature: "getApproved"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
@@ -667,6 +778,18 @@ export interface TempoIdentityRegistry extends BaseContract {
   getFunction(
     nameOrSignature: "register(string)"
   ): TypedContractMethod<[agentURI: string], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "registerWithAgent"
+  ): TypedContractMethod<
+    [
+      agentURI: string,
+      ownerAddress: AddressLike,
+      deadline: BigNumberish,
+      ownerSignature: BytesLike
+    ],
+    [bigint],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "safeTransferFrom(address,address,uint256)"
   ): TypedContractMethod<
@@ -739,6 +862,20 @@ export interface TempoIdentityRegistry extends BaseContract {
     nameOrSignature: "unsetAgentWallet"
   ): TypedContractMethod<[agentId: BigNumberish], [void], "nonpayable">;
 
+  getEvent(
+    key: "AgentAddressSet"
+  ): TypedContractEvent<
+    AgentAddressSetEvent.InputTuple,
+    AgentAddressSetEvent.OutputTuple,
+    AgentAddressSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "AgentBurned"
+  ): TypedContractEvent<
+    AgentBurnedEvent.InputTuple,
+    AgentBurnedEvent.OutputTuple,
+    AgentBurnedEvent.OutputObject
+  >;
   getEvent(
     key: "AgentWalletSet"
   ): TypedContractEvent<
@@ -818,7 +955,29 @@ export interface TempoIdentityRegistry extends BaseContract {
   >;
 
   filters: {
-    "AgentWalletSet(uint256,address)": TypedContractEvent<
+    "AgentAddressSet(uint256,address)": TypedContractEvent<
+      AgentAddressSetEvent.InputTuple,
+      AgentAddressSetEvent.OutputTuple,
+      AgentAddressSetEvent.OutputObject
+    >;
+    AgentAddressSet: TypedContractEvent<
+      AgentAddressSetEvent.InputTuple,
+      AgentAddressSetEvent.OutputTuple,
+      AgentAddressSetEvent.OutputObject
+    >;
+
+    "AgentBurned(uint256,address)": TypedContractEvent<
+      AgentBurnedEvent.InputTuple,
+      AgentBurnedEvent.OutputTuple,
+      AgentBurnedEvent.OutputObject
+    >;
+    AgentBurned: TypedContractEvent<
+      AgentBurnedEvent.InputTuple,
+      AgentBurnedEvent.OutputTuple,
+      AgentBurnedEvent.OutputObject
+    >;
+
+    "AgentWalletSet(uint256,address,address)": TypedContractEvent<
       AgentWalletSetEvent.InputTuple,
       AgentWalletSetEvent.OutputTuple,
       AgentWalletSetEvent.OutputObject
@@ -906,7 +1065,7 @@ export interface TempoIdentityRegistry extends BaseContract {
       MetadataUpdateEvent.OutputObject
     >;
 
-    "Registered(uint256,string,address)": TypedContractEvent<
+    "Registered(uint256,string,address,address)": TypedContractEvent<
       RegisteredEvent.InputTuple,
       RegisteredEvent.OutputTuple,
       RegisteredEvent.OutputObject
@@ -928,7 +1087,7 @@ export interface TempoIdentityRegistry extends BaseContract {
       TransferEvent.OutputObject
     >;
 
-    "URIUpdated(uint256,string,address)": TypedContractEvent<
+    "URIUpdated(uint256,string,string,address)": TypedContractEvent<
       URIUpdatedEvent.InputTuple,
       URIUpdatedEvent.OutputTuple,
       URIUpdatedEvent.OutputObject

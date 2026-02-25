@@ -32,7 +32,24 @@ async function main() {
     console.log("TempoNameService deployed at:", tnsAddress);
 
     // Save deployment info
+    const outPath = path.join(__dirname, "..", "deployments.json");
+
+    // Preserve previous deployment in history
+    let history: any[] = [];
+    if (fs.existsSync(outPath)) {
+        try {
+            const prev = JSON.parse(fs.readFileSync(outPath, "utf-8"));
+            if (prev.history) {
+                history = prev.history;
+            }
+            // Archive current deployment (without its own history)
+            const { history: _, ...prevDeployment } = prev;
+            history.push(prevDeployment);
+        } catch { }
+    }
+
     const deployments = {
+        version: "draft_v3",
         network: "tempoModerato",
         chainId: 42431,
         deployer: deployer.address,
@@ -42,11 +59,11 @@ async function main() {
             TempoReputationRegistry: reputationAddress,
             TempoNameService: tnsAddress,
         },
+        history,
     };
 
-    const outPath = path.join(__dirname, "..", "deployments.json");
     fs.writeFileSync(outPath, JSON.stringify(deployments, null, 2));
-    console.log("\n✅ Deployment info saved to deployments.json");
+    console.log("\n✅ Deployment info saved to deployments.json (draft_v3)");
     console.log(JSON.stringify(deployments, null, 2));
 }
 

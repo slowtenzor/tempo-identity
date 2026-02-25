@@ -1,34 +1,149 @@
 {
+  "schemaVersion": "1.1.0",
   "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
-  "name": "vpn.tempo",
-  "description": "Premium High-Speed VPN Agent. Zero logs, instant access.",
-  "image": "ipfs://QmYourImageHash",
+  "issuedAt": "2026-02-24T12:00:00Z",
+  "id": {
+    "tns": "btc-analyzer.tempo",
+    "did": "did:tempo:btc-analyzer"
+  },
+  "ownership": {
+    "ownerAddress": "0xOwnerHumanOrDAO000000000000000000000000",
+    "agentAddress": "0xAgentEOAWorkingWallet0000000000000000000"
+  },
+  "agent": {
+    "type": "BOT",
+    "displayName": "BTC Analyzer",
+    "description": "Autonomous agent performing BTC market analysis for given timeframes. Returns structured analysis with confidence scores.",
+    "image": "ipfs://QmBTCAnalyzerImage"
+  },
   "services": [
     {
+      "name": "XMTP",
+      "endpoint": "xmtp:0xAgentEOAWorkingWallet0000000000000000000",
+      "version": "v3-mls",
+      "metadata": {
+        "inboxId": "dd0f14d4b90e4ae8c181e32a50a9b440c6c30573..."
+      }
+    },
+    {
       "name": "MCP",
-      "endpoint": "https://vpn-node-01.tempo.net/mcp",
+      "endpoint": "https://btc-analyzer.tempo.net/mcp",
       "version": "2025-06-18"
     },
     {
       "name": "Payment",
-      "endpoint": "https://pay.tempo.net/invoice",
-      "version": "x402"
+      "endpoint": "0xAgentEOAWorkingWallet0000000000000000000",
+      "version": "EVM"
     },
     {
       "name": "GitHub",
-      "endpoint": "https://github.com/tempo-labs/vpn-agent"
+      "endpoint": "https://github.com/tempo-labs/btc-analyzer-agent"
     }
   ],
+  "capabilities": {
+    "protocols": [
+      "mcp/1.0",
+      "xmtp/v3-mls",
+      "a2a/json-rpc"
+    ],
+    "skills": [
+      {
+        "id": "btc_market_analysis",
+        "name": "BTC Market Analysis",
+        "description": "Analyzes BTC price action, volume, and on-chain metrics for a specified timeframe.",
+        "accepted_payload": {
+          "type": "object",
+          "properties": {
+            "protocol": {
+              "const": "SCP_Phase2"
+            },
+            "timeframe": {
+              "type": "string",
+              "enum": [
+                "24h",
+                "48h",
+                "7d"
+              ]
+            },
+            "asset": {
+              "type": "string",
+              "example": "BTC"
+            },
+            "indicators": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "rsi",
+                  "macd",
+                  "volume",
+                  "fear_greed"
+                ]
+              },
+              "description": "Optional list of indicators to include"
+            }
+          },
+          "required": [
+            "protocol",
+            "timeframe",
+            "asset"
+          ]
+        },
+        "response_schema": {
+          "type": "object",
+          "properties": {
+            "summary": {
+              "type": "string"
+            },
+            "sentiment": {
+              "type": "string",
+              "enum": [
+                "bullish",
+                "bearish",
+                "neutral"
+              ]
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "indicators": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "summary",
+            "sentiment",
+            "confidence"
+          ]
+        }
+      }
+    ]
+  },
+  "routing": {
+    "xmtpAddress": "xmtp:0xAgentEOAWorkingWallet0000000000000000000",
+    "mcpEndpoint": "https://btc-analyzer.tempo.net/mcp",
+    "paymentWallet": "0xAgentEOAWorkingWallet0000000000000000000"
+  },
   "registrations": [
     {
-      "agentId": 1,
-      "agentRegistry": "eip155:5042002:0xRegistryAddress"
+      "agentId": 42,
+      "agentRegistry": "eip155:42431:0xTempoIdentityRegistryAddress"
     }
   ],
-  "attributes": {
-    "Agent Type": "ORGANIZATION",
-    "Legal": "US-DE-987654321",
-    "Trust Score": 98,
-    "Category": "Network Utility"
+  "proofs": [
+    {
+      "type": "GITHUB",
+      "value": "tempo-labs/btc-analyzer-agent"
+    }
+  ],
+  "integrity": {
+    "hash": "0xkeccak256ofJCScanonicalizedPassport",
+    "signature": {
+      "type": "EIP191",
+      "value": "0xSignatureByOwnerAddress",
+      "signer": "0xOwnerHumanOrDAO000000000000000000000000"
+    }
   }
 }
